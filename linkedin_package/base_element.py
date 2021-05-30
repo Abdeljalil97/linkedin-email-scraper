@@ -14,9 +14,9 @@ class BaseElement(object):
         self.find()
 
     def find(self):
-        
+        self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
         element = WebDriverWait(self.driver, 3).until(
-            EC.presence_of_all_elements_located(locator=self.locator)
+            EC.visibility_of_any_elements_located(locator=self.locator)
         )
         
         self.web_element=element
@@ -29,8 +29,9 @@ class BaseElement(object):
         return None
     @property
     def text(self):
-        text = self.web_element.text
-        return text
+        for text in self.web_element : 
+            text = text.text
+            return text
     def inpt(self,text):
         element = WebDriverWait(self.driver, 2).until(
             EC.element_to_be_clickable(locator=self.locator)
@@ -47,6 +48,7 @@ class BaseElement(object):
             link=link.get_attribute("href")
             
             if link : 
+                
                 
                 urls.append(link)
 
@@ -70,9 +72,11 @@ class BaseElement(object):
         urls = []
         for link in links :
             link=link.get_attribute("href")
-            print(link)
             start='https://www.linkedin.com/in/'
-            if link and (start in link)  : 
+            if link and (start in link)  :
+                link = link.split('?')
+                link = link[0]
+                link = "{a}/detail/contact-info/".format(a=link)  
                 urls.append(link)
 
         return urls
